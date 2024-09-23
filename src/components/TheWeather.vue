@@ -1,105 +1,55 @@
 <template>
-
-   
-    <div class="weather-display">
-        <div class="get-it">
-        <h1 id="get">↓ Get your weather here ↓</h1>
-        </div>        
-        <div class="zipcode">
-            <label for="zipCode">Enter your zip code: </label>
-            <input id="input" type="text" v-model="zipCode">
-            <button @click="getWeatherByZip">Get Weather!</button>
-        </div>
-        <hr />
-        <div v-show="isLoaded" class="weather">
-            <h2 id="your-city">Today's weather for {{ location.name }}, {{ location.region }}!</h2>
-            <!-- <p id="current-date">{{ currentDate }}</p> -->
-            <hr id="weather-rule" />
-            <p>Temperature: {{ current.temp_f }} F (feels like {{ current.feelslike_f }}    F) </p>
-            <p>Humidity: {{ humidity }}%</p>
-            <p>Wind Speed (mph): {{ current.wind_mph }}</p>
-            <p>{{ text }}</p>
-            <img :src="icon" alt="">
-        </div>
+    <div v-if="weatherData" class="weather-display">
+      <div class="zipcode">
+        <h2 id="today-weather">Today's weather for {{ weatherData.location.name }}, {{ weatherData.location.region }}!</h2>
+        <p>Temperature: {{ weatherData.current.temp_f }} F</p>
+        <p>Humidity: {{ weatherData.current.humidity }}%</p>
+        <p>Wind Speed: {{ weatherData.current.wind_mph }} mph</p>
+        <p>Current conditions: {{ weatherData.current.condition.text }}</p>
+        <img :src="weatherData.current.condition.icon" id="weather-icon" alt="Weather icon">
+      </div>
     </div>
-</template>
-
-<script>
-
-const currentDate = new Date().toLocaleDateString()
-const currentTime = new Date().toLocaleTimeString()
-
-import weatherService from '../services/WeatherService';
-
-export default {
-
-    data() {
-        return {
-            zipCode: '',
-            current: {},
-            text: '',
-            icon: '',
-            location: {},
-            humidity: '',
-            windSpeed: '',
-            isLoaded: false
-            
-        }
+  </template>
+  
+  <script>
+  export default {
+    props: {
+      weatherData: Object, // Receive weather data from HomeView.vue
     },
-    methods: {
-        getWeatherByZip() {
-            weatherService.getWeather(this.zipCode)
-                .then((response) => {
-                    console.log(response.data);
-                    this.current = response.data.current;
-                    this.text = response.data.current.condition.text;
-                    this.icon = response.data.current.condition.icon;
-                    this.location = response.data.location;
-                    this.humidity = response.data.current.humidity;
-                    this.windSpeed = response.data.current.wind_mph;
-                    this.isLoaded = true;
-                })
-        }
-    },
-
-    
-}
-</script>
+  };
+  </script>
 
 <style>
-
 .weather-display {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     margin-top: 12rem;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
+    margin-bottom: -4rem;
+    padding: 3rem;
     border-radius: 8px;
     background: var(--color-background);
-    box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.523);
     text-align: center;
     font-size: 1.2rem;
     color: var(--color-text);
     width: 100%;
-    height: 80%; 
-    padding-top: 0px; 
-    margin-bottom: 40px; 
+    height: 80%;
 }
 
 .get-it {
-    background-color: rgb(49, 119, 218);
+    background-color: rgb(15, 47, 79);
     border-radius: 20px;
     height: 3rem;
     display: flex;
     flex-direction: row;
     justify-content: center;
-    align-items: center; 
+    align-items: center;
     padding-left: 15px;
     padding-right: 15px;
     margin-bottom: 35px;
-    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);     
+    box-shadow: 3px 3px 5px rgba(0, 0, 0, 0.1);
 }
 
 #get {
@@ -107,14 +57,11 @@ export default {
     font-weight: bold;
     font-size: 20px;
     color: white;
-    font-weight: bold; 
+    font-weight: bold;
 }
 
 
-
-
-
-button {
+/* button {
     margin: 5px;
     font-family: roboto;
     font-size: 15px;
@@ -123,13 +70,13 @@ button {
     border-radius: 5px;
     margin-left: 25px;
     margin-top: 20px;
-}
+} */
 
 #input {
     height: 2.5rem;
     width: 10rem;
     border-radius: 5px;
-    margin-left:    5px;
+    margin-left: 5px;
     text-align: left;
     font-size: 15px;
     padding-left: 20px;
@@ -141,11 +88,12 @@ button {
     margin-top: 20px;
 }
 
-#your-city  {
-    line-height: 1.5; 
+#your-city {
+    line-height: 1.5;
     font-family: roboto;
-    font-size: 2rem;
-    font-weight: bold; 
+    font-size: 3rem;
+    font-weight: bold;
+    color: rgb(15, 47, 79);
 }
 
 #weather-rule {
@@ -159,7 +107,29 @@ button {
     font-size: 1.5rem;
     color: black;
     text-align: center;
-    font-family: roboto; 
+    font-family: roboto;
+}
+
+#today-weather {
+    font-weight: bold;
+    font-size: 3rem;
+    color: rgb(15, 47, 79);
+    text-align: center;
+    font-family: roboto;
+}
+
+#weather-icon {
+    width: 100px;
+    height: 100px;
+    margin-top: 1rem;
+}
+
+p {
+    font-size: 1.5rem;
+    color: black;
+    text-align: center;
+    font-family: roboto;
+    margin-top: 0.5rem; 
 }
 
 </style>

@@ -2,36 +2,48 @@
     <div class="jod-container">
         <div class="marquee-container">
             <div id="marquee-text">Joke of the Day</div>
-            <hr id="rule"/>
+            <hr id="rule" />
         </div>
         <h2 id="joke">{{ joke }}</h2>
     </div>
-
 </template>
 
 <script>
-import jokeService from '../services/JokeService'
+import { ref, onMounted } from 'vue';
+import jokeService from '../services/JokeService';
 
 export default {
-    data() {
+    setup() {
+        // Declare reactive variable
+        const joke = ref('');
+
+        // Fetch the random joke on component mount
+        const fetchJoke = () => {
+            jokeService.getRandomJoke()
+                .then((response) => {
+                    console.log(response.data); // Log to check the API response structure
+                    joke.value = response.data; // Use response.data or response.data.joke based on API
+                })
+                .catch((error) => {
+                    console.error('Error fetching joke:', error);
+                });
+        };
+
+        // Fetch joke on component mount
+        onMounted(() => {
+            fetchJoke();
+        });
+
+        // Return the joke so it's available in the template
         return {
-            joke: ''
-        }
+            joke,
+        };
     },
-    created() {
-        jokeService.getRandomJoke()
-            .then((response) => {
-                this.joke = response.data;
-            })
-    }
-
-
-}
-
+};
 </script>
 
-
 <style>
+
 @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 
 .jod-container {
@@ -39,18 +51,19 @@ export default {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-top: 12rem;
+    margin: 10rem auto 4rem auto; 
     border-radius: 8px;
-    background: var(--color-background);
-    box-shadow: 7px 7px 10px rgba(0, 0, 0, 0.1);
+    background-color: white; 
+    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.523);
     text-align: center;
     font-size: 1.2rem;
     color: var(--color-text);
-    width: auto;
+    width: 60%;
     height: 80%;
-    padding-left: 1.5rem;
-    padding-right: 1.5rem;
-    padding-bottom: 3rem;     
+    padding-left: 2rem;
+    padding-right: 2rem;
+    padding-bottom: 3rem;
+    padding-top: 1rem;     
 }
 
 .marquee-container {
@@ -58,19 +71,19 @@ export default {
   overflow: hidden;      /* Hides the text when it moves out of the container */
  /*  background-color: #f9f9f9;
   border: 1px solid #ccc; */
-  padding: 0;
+  padding-top: 2rem;
 }
 
 #marquee-text {
   display: inline-block;  /* Inline block to allow horizontal scrolling */
   white-space: nowrap;    /* Prevents text from wrapping to the next line */
   animation: crawl 15s linear infinite; /* Crawl effect: duration, speed, and infinite loop */
-  font-size: 2rem;
+  font-size: 2.5rem;
   font-family: roboto; 
   font-weight: bold; 
   color: black; 
   margin-top: 0;  
-  margin-bottom: 4rem;
+  margin-bottom: 3rem;
   text-shadow: 2px 2px 4px rgba(132, 41, 41, 0.2); 
 }
 
@@ -97,16 +110,9 @@ export default {
     font-family: roboto; 
     font-style: italic; 
     /* text-shadow: 2px 2px 4px rgba(132, 41, 41, 0.2);  */
-    margin-top: 20px; 
+    margin-top: 10px; 
+    margin-bottom: 2rem; 
 
 }
-
-
-
-
-
-
-
-
 
 </style>
